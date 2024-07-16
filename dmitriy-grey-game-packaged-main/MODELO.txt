@@ -1,0 +1,242 @@
+Links úteis
+Informações de acesso ao jogo:
+ https://www.arlekincasino.com/games/pragmaticexternal/BuffaloKing/54986
+Acesso do cliente do provedor:
+ https://github.com/kaasplay/info-links/blob/main/PROVIDER.md
+
+Compositor
+Adicione a um compositor principal do laravel o seguinte:
+
+    {
+        "type": "path",
+        "url": "../westreels/westreels-main"
+    }
+    ],
+
+
+
+    "westreels/westreels-main": "*"
+
+
+
+    "post-autoload-dump": [
+        "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+        "@php artisan package:discover --ansi",
+        "@php artisan vendor:publish --force --tag=westreels:westreels-main --ansi"
+    ],
+
+
+
+Migrações
+Você pode publicar e executar as migrações com:
+
+php artisan vendor:publish --tag="westreels-main-migrations"
+php artisan migrate
+
+
+Você pode publicar o arquivo de configuração com:
+
+php artisan vendor:publish --tag="westreels-main-config"
+
+
+
+Trabalhando com um arquivo de configuração
+Para registrar um arquivo de configuração, você deve criar um arquivo php com o nome do seu pacote no configdiretório do seu pacote. Neste exemplo deveria estar em <package root>/config/your-package-name.php.
+Se o nome do seu pacote começar com laravel-, esperamos que o seu arquivo de configuração não contenha esse prefixo. Portanto, se o nome do seu pacote for laravel-cool-package, o arquivo de configuração deverá ser nomeado cool-package.php.
+Para registrar esse arquivo de configuração, chame hasConfigFile()no $packagemétodo configurePackage.
+
+$package
+    ->name('your-package-name')
+    ->hasConfigFile();
+
+
+O hasConfigFilemétodo também tornará o arquivo de configuração publicável. Os usuários do seu pacote poderão publicar o arquivo de configuração com este comando.
+
+php artisan vendor:publish --tag=your-package-name-config
+
+
+Caso seu pacote tenha vários arquivos de configuração, você pode passar seus nomes como um array parahasConfigFile
+
+$package
+    ->name('your-package-name')
+    ->hasConfigFile(['my-config-file', 'another-config-file']);
+
+
+Isso registrará suas visualizações no Laravel.
+Se você tiver uma view <package root>/resources/views/myView.blade.php, poderá usá-la assim: view('your-package-name::myView'). Claro, você também pode usar subdiretórios para organizar suas visualizações. Uma visualização localizada em <package root>/resources/views/subdirectory/myOtherView.blade.phppode ser usada com view('your-package-name::subdirectory.myOtherView').
+
+Usando um namespace de visualização customizado
+Você pode passar um namespace de visualização personalizado para o hasViewsmétodo.
+
+$package
+    ->name('your-package-name')
+    ->hasViews('custom-view-namespace');
+
+
+Agora você pode usar as visualizações do pacote assim:
+
+view('custom-view-namespace::myView');
+
+
+
+Publicando as visualizações
+A chamada hasViewstambém tornará as visualizações publicáveis. Os usuários do seu pacote poderão publicar as visualizações com este comando:
+
+php artisan vendor:publish --tag=your-package-name-views
+
+
+
+NGINX
+Instalação Nginx em proxy para pragmática
+
+	location /vs/ {
+	    add_header 'Access-Control-Allow-Origin' '*' always;
+		add_header	'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, HEAD' always;
+		add_header 'Access-Control-Allow-Credentials' 'true' always;
+		add_header 'Access-Control-Allow-Headers' 'Accept,Accept-Encoding,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With' always;
+	    add_header Cache-Control "public";
+	    proxy_pass http://demogamesfree.pragmaticplay.net/gs2c/common/games-html5/games/vs/;
+	    proxy_http_version 1.1;
+	    proxy_set_header Upgrade $http_upgrade;
+	    proxy_set_header Connection "upgrade";
+	    gzip_static on;
+        gzip on;
+        gzip_proxied any;
+        gzip_vary on;
+        gzip_http_version 1.1;
+        gzip_types application/javascript application/json text/css text/xml;
+        gzip_comp_level 4;
+	    access_log off;
+	    expires 1y;
+        proxy_connect_timeout 3s;
+	}
+
+	location /cs/ {
+	    add_header 'Access-Control-Allow-Origin' '*' always;
+		add_header	'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, HEAD' always;
+		add_header 'Access-Control-Allow-Credentials' 'true' always;
+		add_header 'Access-Control-Allow-Headers' 'Accept,Accept-Encoding,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With' always;
+	    add_header Cache-Control "public";
+	    proxy_pass http://demogamesfree.pragmaticplay.net/gs2c/common/games-html5/games/cs/;
+	    proxy_http_version 1.1;
+	    proxy_set_header Upgrade $http_upgrade;
+	    proxy_set_header Connection "upgrade";
+	    gzip_static on;
+        gzip on;
+        gzip_proxied any;
+        gzip_vary on;
+        gzip_http_version 1.1;
+        gzip_types application/javascript application/json text/css text/xml;
+        gzip_comp_level 4;
+	    access_log off;
+	    expires 1y;
+        proxy_connect_timeout 3s;
+	}
+
+	# assets, media
+	location ~* (.+)\.(?:\d+)\.(js|css|png|jpg|svg|jpeg|gif|webp)$ {
+	    etag off;
+	    expires 1M;
+	    access_log off;
+	    add_header Cache-Control "public";
+	    try_files $uri $1.$2;
+	}
+    
+
+
+
+Compartilhando dados globais com visualizações
+Você pode compartilhar dados com todas as visualizações usando o sharesDataWithAllViewsmétodo. Isso disponibilizará a variável compartilhada para todas as visualizações.
+
+$package
+    ->name('your-package-name')
+    ->sharesDataWithAllViews('companyName', 'Spatie');
+
+
+
+Trabalhando com componentes de visualização Blade
+Quaisquer componentes de visualização do Blade fornecidos pelo seu pacote devem ser colocados no <package root>/src/Componentsdiretório.
+Você pode registrar essas visualizações com o hasViewComponentscomando.
+
+$package
+    ->name('your-package-name')
+    ->hasViewComponents('spatie', Alert::class);
+
+
+Isso registrará seus componentes de visualização no Laravel. No caso de Alert::class, ele pode ser referenciado nas visualizações como <x-spatie-alert />, onde spatieé o prefixo que você forneceu durante o registro.
+A chamada hasViewComponentstambém tornará os componentes de visualização publicáveis ​​e serão publicados no app/Views/Components/vendor/<package name>.
+Os usuários do seu pacote poderão publicar os componentes da visualização com este comando:
+
+php artisan vendor:publish --tag=your-package-name-components
+
+
+
+Trabalhando com compositores de visualização
+Você pode registrar qualquer compositor de visualização que seu projeto usa com o hasViewComposersmétodo. Você também pode registrar um retorno de chamada que receba um $viewargumento em vez de um nome de classe.
+Para registrar um compositor de visualização com todas as visualizações, use um asterisco como nome da visualização '*'.
+
+$package
+    ->name('your-package-name')
+    ->hasViewComposer('viewName', MyViewComposer::class)
+    ->hasViewComposer('*', function($view) { 
+        $view->with('sharedVariable', 123); 
+    });
+
+
+
+Trabalhando com ativos
+Quaisquer ativos que seu pacote fornecer devem ser colocados no <package root>/resources/dist/diretório.
+Você pode tornar esses ativos publicáveis ​​pelo hasAssetsmétodo.
+
+$package
+    ->name('your-package-name')
+    ->hasAssets();
+
+
+Os usuários do seu pacote poderão publicar os ativos com este comando:
+
+php artisan vendor:publish --tag=your-package-name-assets
+
+
+Isso copiará os ativos para o public/vendor/<your-package-name>diretório do aplicativo onde seu pacote está instalado.
+
+Trabalhando com migrações
+O PackageServiceProviderpressupõe que todas as migrações sejam colocadas neste diretório: <package root>/database/migrations. Dentro desse diretório você pode colocar qualquer migração.
+Para registrar sua migração, você deverá passar o nome dela sem a extensão para a hasMigrationtabela.
+Se o seu arquivo de migração for chamado, create_my_package_tables.php.stubvocê poderá registrá-los assim:
+
+$package
+    ->name('your-package-name')
+    ->hasMigration('create_my_package_tables');
+
+
+Caso seu pacote contenha vários arquivos de migração, você pode simplesmente ligar hasMigrationvárias vezes ou usar hasMigrations.
+
+$package
+    ->name('your-package-name')
+    ->hasMigrations(['my_package_tables', 'some_other_migration']);
+
+
+A chamada hasMigrationtambém tornará as migrações publicáveis. Os usuários do seu pacote poderão publicar as migrações com este comando:
+
+php artisan vendor:publish --tag=your-package-name-migrations
+
+
+Como você poderia esperar, os arquivos de migração publicados serão prefixados com a data e hora atual.
+
+Registrando comandos
+Você pode registrar qualquer comando fornecido pelo pacote com a hasCommandfunção.
+
+$package
+    ->name('your-package-name')
+    ->hasCommand(YourCoolPackageCommand::class);
+
+
+Se o seu pacote fornece vários comandos, você pode usar hasCommandvárias vezes ou passar um array parahasCommands
+
+$package
+    ->name('your-package-name')
+    ->hasCommands([
+        YourCoolPackageCommand::class,
+        YourOtherCoolPackageCommand::class,
+    ]);
